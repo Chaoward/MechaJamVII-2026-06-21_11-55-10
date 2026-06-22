@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.Interactions;
 
 public class InputHandler : MonoBehaviour
 {
@@ -10,13 +9,13 @@ public class InputHandler : MonoBehaviour
     public static InputActionMap curActionMap { get; private set; } = null;
 
     public static Vector2 moveInput;
-    public static Vector2 lookInput;
+    public static Vector2 aimInput;
 
-    private static UnityInputAsset inputAsset;
+    private static MainControls inputAsset;
 
     void Awake()
     {
-        inputAsset = new UnityInputAsset();
+        inputAsset = new MainControls();
 
         foreach (var map in inputAsset.asset.actionMaps)
         {
@@ -33,12 +32,12 @@ public class InputHandler : MonoBehaviour
     void Update()
     {
         moveInput = inputAsset.Player.Move.ReadValue<Vector2>();
-        lookInput = inputAsset.Player.Look.ReadValue<Vector2>();
+        aimInput = inputAsset.Player.Aim.ReadValue<Vector2>();
     }
 
 
     // 0 => success, 1 => can't find action in current action map
-    public static int BindInput(string actionName, Action<InputAction.CallbackContext> binding)
+    public static int BindInput(string actionName, System.Action<InputAction.CallbackContext> binding)
     {
         InputAction trgtAction = FindAction(actionName);
 
@@ -55,7 +54,7 @@ public class InputHandler : MonoBehaviour
     }
 
     // 0 => success, 1 => can't find action in current action map
-    public static int UnbindInput(string actionName, Action<InputAction.CallbackContext> binding)
+    public static int UnbindInput(string actionName, System.Action<InputAction.CallbackContext> binding)
     {
         InputAction trgtAction = FindAction(actionName);
 

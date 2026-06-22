@@ -378,28 +378,16 @@ CompositeCollider2D:
   m_ColliderPaths:
   - m_Collider: {fileID: 636080696}
     m_ColliderPaths:
-    - - X: 940000000
-        Y: -10000000
-      - X: 930000000
-        Y: -10000000
-      - X: 930000000
-        Y: -20000000
-      - X: 940000000
-        Y: -20000000
-    - - X: 7110000128
-        Y: -50000000
-      - X: -6320000000
-        Y: -50000000
-      - X: -6320000000
+    - - X: -6320000000
         Y: -60000000
       - X: 7110000128
         Y: -60000000
+      - X: 7110000128
+        Y: -50000000
+      - X: -6320000000
+        Y: -50000000
   m_CompositePaths:
     m_Paths:
-    - - {x: 93.99997, y: -2}
-      - {x: 93.99997, y: -1}
-      - {x: 93, y: -1.0000293}
-      - {x: 93.00003, y: -2}
     - - {x: 711, y: -6}
       - {x: 711, y: -5}
       - {x: -632, y: -5.000029}
@@ -13931,25 +13919,15 @@ Tilemap:
       m_TileObjectToInstantiateIndex: 65535
       dummyAlignment: 0
       m_AllTileFlags: 1073741825
-  - first: {x: 93, y: -2, z: 0}
-    second:
-      serializedVersion: 2
-      m_TileIndex: 0
-      m_TileSpriteIndex: 0
-      m_TileMatrixIndex: 0
-      m_TileColorIndex: 0
-      m_TileObjectToInstantiateIndex: 65535
-      dummyAlignment: 0
-      m_AllTileFlags: 1073741825
   m_AnimatedTiles: {}
   m_TileAssetArray:
-  - m_RefCount: 1344
+  - m_RefCount: 1343
     m_Data: {fileID: 11400000, guid: 09e65075477ccfa4f9b8efbca7cb5a46, type: 2}
   m_TileSpriteArray:
-  - m_RefCount: 1344
+  - m_RefCount: 1343
     m_Data: {fileID: 7482667652216324306, guid: 149cb7f3a4209a94083ab7efd2082ab8, type: 3}
   m_TileMatrixArray:
-  - m_RefCount: 1344
+  - m_RefCount: 1343
     m_Data:
       e00: 1
       e01: 0
@@ -13968,7 +13946,7 @@ Tilemap:
       e32: 0
       e33: 1
   m_TileColorArray:
-  - m_RefCount: 1344
+  - m_RefCount: 1343
     m_Data: {r: 1, g: 1, b: 1, a: 1}
   m_TileObjectToInstantiateArray: []
   m_AnimationFrameRate: 1
