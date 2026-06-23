@@ -20,7 +20,7 @@ public class MechEnergy : MonoBehaviour
 
     void Update()
     {
-        if (maxCharge >= charge) return;
+        if (charge >= maxCharge) return;
         if (Time.fixedTime - _time < rechargeDelay) return;
 
         Recharge( (int)(rechargeRate * Time.deltaTime) );
@@ -35,7 +35,7 @@ public class MechEnergy : MonoBehaviour
         }
 
         charge -= amount;
-        _time = Time.deltaTime;
+        _time = Time.fixedTime;
         return true;
     }
 

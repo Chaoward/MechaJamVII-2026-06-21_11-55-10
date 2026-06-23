@@ -30,6 +30,11 @@ public class MechMove : MonoBehaviour
     [Header("Move Stats")]
     public float speed = 25f;
     public float jumpSpeed = 40f;
+    public float airAccelPerc = 0.3f;   //percent of speed to accelerate in air
+
+    [Space(5)]
+    [Header("Dash Stats")]
+
     public float dashSpeed = 80f;
     public float dashTime = 0.4f;
     public float dashDelay = 0.1f;
@@ -37,14 +42,27 @@ public class MechMove : MonoBehaviour
     public int dashCost = 200;
 
     [Space(5)]
+    [Header("Flight Stats")]
 
+    public float flightForce = 10f;
+    public float maxFlightSpeed = 50f;
+    public int flightCost = 30;
+
+    [Space(5)]
+    [Header("Gravity Scale")]
+
+    public float gravScale = 2f;
+    public float gravFallingScale = 2.8f;
+
+    [Space(5)]
     [Header("Ref")]
     public MechEnergy en;
+    public MechTargeting aim;
 
-    public bool isFacingRight {get; private set;} = true;
-    public bool isDashing {get; private set;}
-    public bool isFlying {get; private set;}
-    public bool hasDoubleJumped {get; private set;}
+    public bool isFacingRight { get; private set; } = true;
+    public bool isDashing { get; private set; }
+    public bool isFlying { get; private set; }
+    public bool hasDoubleJumped { get; private set; }
     public bool isGrounded
     {
         get
@@ -64,26 +82,34 @@ public class MechMove : MonoBehaviour
     {
         InputHandler.BindInput("Jump", JumpAction);
         InputHandler.BindInput("Dash", DashAction);
+
+        rb = GetComponent<Rigidbody2D>();
+        _moveDir = new Vector2();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (isDashing) {
-            if (Time.fixedTime - _dashTimestamp >= dashTime) {
-                isDashing = false;
-                _dashTimestamp = Time.fixedTime;
-            }
-        }
+        // //dash timing
+        // if (isDashing) {
+        //     if (Time.fixedTime - _dashTimestamp >= dashTime) {
+        //         isDashing = false;
+        //         _dashTimestamp = Time.fixedTime;
+        //     }
+        // }
 
         //block polling movement
-        if (!isDashing || canWarpDash) {
+        if (!isDashing || canWarpDash)
+        {
             //poll movement
             _moveDir.Set(
                 InputHandler.moveInput.x * speed,
-                InputHandler.moveInput.y * speed 
+                isHovering ? InputHandler.moveInput.y * speed : rb.velocity.y
             );
         }
+
+        // set facing
+        isFacingRight = transform.position.x - aim.reticle.position.x < 0f;
     }
 
 
@@ -94,11 +120,11 @@ public class MechMove : MonoBehaviour
         {
             if (canWarpDash)
             {
-                
+                Warp();
             }
             else
             {
-                Dash( !isGrounded && canfly );
+                Dash(!isGrounded && canfly);
             }
             // else if (canDirDash && _moveDir.magnitude > 0f)
             // {
@@ -106,61 +132,108 @@ public class MechMove : MonoBehaviour
             // }
             // else
             // {
-                
+
             // }
         }
-        else {
-            //fly
+        else
+        {
+            //flight
+            if (isFlying)
+                Fly();
 
             //move
             Move();
         }
+
+        //double gravity on falls, 150% normal
+        rb.gravityScale = rb.velocity.y < 0f ? gravFallingScale : gravScale;
     }
 
 
     #region Move Logic
 
-    private void Move(bool isAdditive=false)
+    private void Move(bool isAdditive = false)
     {
-        if (isGrounded)
+        if (isGrounded || isHovering)
         {
             rb.velocity = _moveDir;
             return;
         }
-        
-        //air decceleration
-        if ( Math.Abs(rb.velocity.x) > speed )
+
+        //overspeed air decceleration by percentage of speed over normal value
+        if (Math.Abs(rb.velocity.x) > speed)
         {
-            
+            float decelVal = Math.Abs(rb.velocity.x) - speed;
+            rb.velocity += (rb.velocity.x > 0f ? -decelVal : decelVal) * Time.fixedDeltaTime * Vector2.right;
         }
 
         //air acceleration
+        if (InputHandler.moveInput.x != 0f)
+        {
+            //float temp = Math.Clamp((_moveDir.x * airAccelPerc * Time.fixedDeltaTime) + rb.velocity.x, -speed, speed);
+            rb.velocity = new Vector2(
+                //temp,
+                Math.Clamp((_moveDir.x * airAccelPerc * Time.fixedDeltaTime) + rb.velocity.x, -speed, speed),
+                rb.velocity.y
+            );
+        }
     }
 
-    private bool Jump(bool isAdditive=false)
+    private bool Jump(bool isAdditive = false)
     {
-        if (isGrounded)
-            transform.position += 0.1f * Vector3.up;
+        if (isAdditive)
+        {
+            rb.velocity += jumpSpeed * Vector2.up;
+        }
+        else
+        {
+            rb.velocity = new Vector2(
+                rb.velocity.x,
+                jumpSpeed
+            );
+        }
 
-        rb.velocity = new Vector2(
-            rb.velocity.x,
-            jumpSpeed
-        );
+        if (isGrounded) 
+            transform.position += 0.051f * Vector3.up;    //unGrounded
+
+        // rb.velocity = (isAdditive ? rb.velocity : Vector2.zero) + new Vector2(
+        //     rb.velocity.x,
+        //     jumpSpeed
+        // );
 
         return true;
     }
 
-    private void Dash(bool isAdditive=false)
+    private void Dash(bool isAdditive = false)
     {
-        if (isAdditive)
+        if (Time.fixedTime - _dashTimestamp >= dashTime)
         {
-            
+            isDashing = false;
+            _dashTimestamp = Time.fixedTime;
+
+            //conserve some movement in air
+            if (!isGrounded)
+            {
+                rb.velocity *= conserveDashPerc;
+            }
+
+            return;
         }
-        else
-        {
-            rb.velocity = _moveDir;
-            
-        }
+        rb.velocity = _moveDir;
+    }
+
+
+    private void Fly()
+    {
+        if (!en.Drain( (int)(flightCost * Time.deltaTime) )) return;
+
+        float yVelo = (rb.velocity.y > maxFlightSpeed ? 0.1f : 1f) *    // 10% of flight power if over max flight speed
+            Math.Clamp(rb.velocity.y + (flightForce * Time.deltaTime), float.NegativeInfinity, maxFlightSpeed);
+
+        rb.velocity = new Vector2(
+            rb.velocity.x,
+            yVelo
+        );
     }
 
 
@@ -178,10 +251,12 @@ public class MechMove : MonoBehaviour
     {
         if (context.ReadValueAsButton() && (!isDashing || canWarpDash))
         {
-            if (canDoubleJump && !hasDoubleJumped && !isGrounded) {
-                Jump();
+            if (canDoubleJump && !hasDoubleJumped && !isGrounded)
+            {
+                Jump(true);
             }
-            else if (isGrounded) {
+            else if (isGrounded)
+            {
                 Jump();
             }
 
@@ -208,7 +283,8 @@ public class MechMove : MonoBehaviour
 
             isDashing = true;
             _dashTimestamp = Time.fixedTime;
-            if (canDirDash) {
+            if (canDirDash)
+            {
                 _moveDir = InputHandler.moveInput.magnitude > 0f ?
                     dashSpeed * InputHandler.moveInput.normalized :
                     (isFacingRight ? dashSpeed * Vector2.right : dashSpeed * Vector2.left);
@@ -218,7 +294,7 @@ public class MechMove : MonoBehaviour
                 _moveDir = InputHandler.moveInput.x != 0f ?
                     InputHandler.moveInput.normalized.x * dashSpeed * Vector2.right :
                     (isFacingRight ? dashSpeed * Vector2.right : dashSpeed * Vector2.left);
-            }   
+            }
         }
     }
 
