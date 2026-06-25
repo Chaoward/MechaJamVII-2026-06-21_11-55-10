@@ -2,14 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerMech : MonoBehaviour
+public class PlayerMech : MechEntity
 {
     public MechMove move;
     public MechEnergy en;
     public MechTargeting targeting;
+    public BaseCore coreBase;
 
     void Awake()
     {
+        //coreBase.Apply();
+
         if (move == null)
             move = GetComponent<MechMove>();
         if (en == null)

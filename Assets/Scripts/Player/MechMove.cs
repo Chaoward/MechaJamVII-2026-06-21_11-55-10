@@ -46,6 +46,7 @@ public class MechMove : MonoBehaviour
 
     public float flightForce = 10f;
     public float maxFlightSpeed = 50f;
+    public float conserveFlightPerc = 0.7f;
     public int flightCost = 30;
 
     [Space(5)]
@@ -65,11 +66,14 @@ public class MechMove : MonoBehaviour
     public bool hasDoubleJumped { get; private set; }
     public bool isGrounded
     {
-        get
-        {
-            return Physics2D.OverlapCircle(groundCheck.position, 0.05f, LayerMask.GetMask("ground"));
-        }
+        get; private set;
+        // get
+        // {
+        //     return Physics2D.OverlapCircle(groundCheck.position, 0.1f, LayerMask.GetMask("ground"));
+        // }
     }
+    [SerializeField]
+    private float _groundcheckradius = 0.15f;
 
 
     [SerializeField]
@@ -87,6 +91,7 @@ public class MechMove : MonoBehaviour
         _moveDir = new Vector2();
     }
 
+    #region Updates
     // Update is called once per frame
     void Update()
     {
@@ -98,10 +103,9 @@ public class MechMove : MonoBehaviour
         //     }
         // }
 
-        //block polling movement
+        //polling movement
         if (!isDashing || canWarpDash)
         {
-            //poll movement
             _moveDir.Set(
                 InputHandler.moveInput.x * speed,
                 isHovering ? InputHandler.moveInput.y * speed : rb.velocity.y
@@ -110,11 +114,17 @@ public class MechMove : MonoBehaviour
 
         // set facing
         isFacingRight = transform.position.x - aim.reticle.position.x < 0f;
+        if (isFacingRight ^ transform.lossyScale.x > 0f)
+            transform.localScale = Vector3.Scale(transform.localScale, Vector3.left);
     }
 
 
     void FixedUpdate()
     {
+        isGrounded = Physics2D.OverlapCircle(groundCheck.position, _groundcheckradius, LayerMask.GetMask("ground"));
+        if (isGrounded)
+            hasDoubleJumped = false;
+
         //dash
         if (isDashing)
         {
@@ -126,14 +136,6 @@ public class MechMove : MonoBehaviour
             {
                 Dash(!isGrounded && canfly);
             }
-            // else if (canDirDash && _moveDir.magnitude > 0f)
-            // {
-            //     Dash();
-            // }
-            // else
-            // {
-
-            // }
         }
         else
         {
@@ -146,8 +148,13 @@ public class MechMove : MonoBehaviour
         }
 
         //double gravity on falls, 150% normal
-        rb.gravityScale = rb.velocity.y < 0f ? gravFallingScale : gravScale;
+        if (isFlying)
+            rb.gravityScale = 1f;
+        else
+            rb.gravityScale = rb.velocity.y < 0f ? gravFallingScale : gravScale;
     }
+
+    #endregion
 
 
     #region Move Logic
@@ -181,12 +188,11 @@ public class MechMove : MonoBehaviour
 
     private bool Jump(bool isAdditive = false)
     {
-        if (isAdditive)
+        if (isAdditive && rb.velocity.y > 0f)
         {
             rb.velocity += jumpSpeed * Vector2.up;
         }
-        else
-        {
+        else {
             rb.velocity = new Vector2(
                 rb.velocity.x,
                 jumpSpeed
@@ -194,7 +200,7 @@ public class MechMove : MonoBehaviour
         }
 
         if (isGrounded) 
-            transform.position += 0.051f * Vector3.up;    //unGrounded
+            transform.position += _groundcheckradius * Vector3.up;    //unGrounded
 
         // rb.velocity = (isAdditive ? rb.velocity : Vector2.zero) + new Vector2(
         //     rb.velocity.x,
@@ -225,10 +231,21 @@ public class MechMove : MonoBehaviour
 
     private void Fly()
     {
-        if (!en.Drain( (int)(flightCost * Time.deltaTime) )) return;
+        if (!en.Drain( (int)Math.Ceiling(flightCost * Time.fixedDeltaTime) )) return;
 
-        float yVelo = (rb.velocity.y > maxFlightSpeed ? 0.1f : 1f) *    // 10% of flight power if over max flight speed
-            Math.Clamp(rb.velocity.y + (flightForce * Time.deltaTime), float.NegativeInfinity, maxFlightSpeed);
+        float yVelo = 0f;
+        // float yVelo = (rb.velocity.y > maxFlightSpeed ? 0.1f : 1f) *    // 10% of flight power if over max flight speed
+        //     Math.Clamp(rb.velocity.y + (flightForce * Time.fixedDeltaTime), float.NegativeInfinity, maxFlightSpeed);
+
+        if (rb.velocity.y < 0f)
+        {
+            yVelo = ((flightForce - rb.velocity.y) * Time.fixedDeltaTime) + rb.velocity.y;
+        }
+        else
+        {
+            yVelo = (rb.velocity.y > maxFlightSpeed ? 0.1f : 1f) *    // 10% of flight power if over max flight speed
+                Math.Clamp(rb.velocity.y + (flightForce * Time.fixedDeltaTime), 0.1f, maxFlightSpeed);
+        }
 
         rb.velocity = new Vector2(
             rb.velocity.x,
@@ -253,6 +270,7 @@ public class MechMove : MonoBehaviour
         {
             if (canDoubleJump && !hasDoubleJumped && !isGrounded)
             {
+                hasDoubleJumped = true;
                 Jump(true);
             }
             else if (isGrounded)
@@ -299,4 +317,14 @@ public class MechMove : MonoBehaviour
     }
 
     #endregion
+
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = isGrounded ? Color.green : Color.red;
+        Gizmos.DrawSphere(groundCheck.position, _groundcheckradius);
+
+        Gizmos.color = !hasDoubleJumped ? Color.green : Color.red; 
+        Gizmos.DrawSphere(transform.position, 0.3f);
+    }
 }
