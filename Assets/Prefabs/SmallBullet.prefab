@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 8532501677948972557}
   - component: {fileID: 7637071828504090210}
   m_Layer: 0
-  m_Name: Bullet
+  m_Name: SmallBullet
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -71,7 +71,7 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 0.1
+  m_Radius: 0.05
 --- !u!96 &8532501677948972557
 TrailRenderer:
   serializedVersion: 2
@@ -114,7 +114,7 @@ TrailRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Time: 0.1
+  m_Time: 0.05
   m_Parameters:
     serializedVersion: 3
     widthMultiplier: 0.6754676
@@ -122,14 +122,14 @@ TrailRenderer:
       serializedVersion: 2
       m_Curve:
       - serializedVersion: 3
-        time: 0.021856133
-        value: 0.21869174
-        inSlope: 0
-        outSlope: 0
+        time: 0.021698128
+        value: 0.09766403
+        inSlope: -0.43279174
+        outSlope: -0.43279174
         tangentMode: 0
         weightedMode: 0
-        inWeight: 0.33333334
-        outWeight: 0.33333334
+        inWeight: 0
+        outWeight: 0.1002893
       - serializedVersion: 3
         time: 1
         value: 0
@@ -192,8 +192,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23ea708c4c20f774bbfb74c2ae2b2012, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damage: 30
-  speed: 50
+  damage: 10
+  speed: 88
   lifeTime: 5
   owner: {fileID: 0}
   onHit:

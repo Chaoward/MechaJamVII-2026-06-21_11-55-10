@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -10,6 +11,7 @@ public class Projectile : MonoBehaviour
     public int damage = 10;
     public float speed = 5f;
     public float lifeTime = 5f;
+    public MechEntity owner;
 
     [Space(5)]
 
@@ -40,15 +42,25 @@ public class Projectile : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D collision)
     {
-        if ((collision.gameObject.layer & LayerMask.GetMask(_collideLayers)) == 0) 
+        //Debug.Log(LayerMask.GetMask( LayerMask.LayerToName(collision.gameObject.layer) ));
+        // Debug.Log(LayerMask.GetMask(_collideLayers));
+        if ((LayerMask.GetMask( LayerMask.LayerToName(collision.gameObject.layer) ) & 
+            LayerMask.GetMask(_collideLayers)) == 0) 
             return;
 
-        onHit.Invoke(this, collision);
-
-        if (damage > 0) {
-            if (collision.TryGetComponent(out MechEntity hit))
-                hit.Damage(damage);
+        if (collision.TryGetComponent(out MechEntity hit)) {
+            if (hit != owner) {
+                if (damage > 0)
+                    hit.Damage(damage);
+                onHit.Invoke(this, collision);
+            }
         }
+
+        // if (damage > 0) {
+        //     if (collision.TryGetComponent(out MechEntity hit)) {
+        //         hit.Damage(damage);
+        //     }
+        // }
 
         Destroy(this.gameObject);
     }

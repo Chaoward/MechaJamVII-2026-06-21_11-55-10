@@ -84,6 +84,37 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &4010199175185404670
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7792789878975650862}
+  m_Layer: 0
+  m_Name: attackoffset
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7792789878975650862
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4010199175185404670}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.268, y: 0.0153, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6256284191225721823}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6094803305662604666
 GameObject:
   m_ObjectHideFlags: 0
@@ -112,7 +143,8 @@ Transform:
   m_LocalPosition: {x: -0.485, y: 0.101, z: 0}
   m_LocalScale: {x: 5.59, y: 5.59, z: 5.59}
   m_ConstrainProportionsScale: 1
-  m_Children: []
+  m_Children:
+  - {fileID: 7792789878975650862}
   m_Father: {fileID: 2662485134458322422}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -216,9 +248,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mech: {fileID: 0}
   attack: 30
-  attackRate: 0.7
+  attackRate: 0.35
+  ammo: -1
   isHitScan: 0
-  attackOffset: {x: 1.02, y: 0.19}
+  attackOffset: {fileID: 7792789878975650862}
   trail: {fileID: 0}
   projectile: {fileID: 7637071828504090210, guid: 30e0802814f9cf9428e448454ddc499c, type: 3}
   weaponSprite: {fileID: 1008930485270418272}

@@ -21,7 +21,15 @@ public class PlayerMech : MechEntity
             targeting = GetComponent<MechTargeting>();
 
         //apply ref
-        move.en = en;
-        move.aim = targeting;
+        if (move) {
+            move.en = en;
+            move.aim = targeting;
+        }
+
+        if (targeting)
+        {
+            targeting.mech = this;
+            targeting.en = en;
+        }
     }
 }

@@ -115,7 +115,10 @@ public class MechMove : MonoBehaviour
         // set facing
         isFacingRight = transform.position.x - aim.reticle.position.x < 0f;
         if (isFacingRight ^ transform.lossyScale.x > 0f)
-            transform.localScale = Vector3.Scale(transform.localScale, Vector3.left);
+            transform.localScale = new Vector3(
+                -transform.localScale.x,
+                transform.localScale.y, transform.localScale.z
+            );
     }
 
 

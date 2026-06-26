@@ -5,6 +5,11 @@ using UnityEngine;
 
 public class BaseCore : Core
 {   
+    public BaseCore()
+    {
+        ammo = -1;
+    }
+
     public override void Apply()
     {
         //===== MOVEMENT =================

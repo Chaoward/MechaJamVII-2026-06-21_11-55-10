@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -21,7 +22,13 @@ public class MechTargeting : MonoBehaviour
 
     private Vector2 _aimDirection;
     private float _fireTime = 0f;
+    private Core baseCore;
 
+
+    void Awake()
+    {
+        baseCore = mech.coreBase;
+    }
 
     void Start()
     {
@@ -32,11 +39,11 @@ public class MechTargeting : MonoBehaviour
     void Update()
     {
         reticle.position = Camera.main.ScreenToWorldPoint(InputHandler.aimInput);
-        _aimDirection = (reticle.position - transform.position).normalized;
+        _aimDirection = (reticle.position - (core ? core.attackOffset.position : transform.position)).normalized;
 
         //rotate weapon render
         core.weaponSprite.transform.Rotate(0f, 0f,
-            Vector2.SignedAngle(-core.weaponSprite.transform.up, _aimDirection),
+            Vector2.SignedAngle(mech.move.isFacingRight ? core.weaponSprite.transform.right : -core.weaponSprite.transform.right, _aimDirection),
             Space.World
         );
     
@@ -50,20 +57,28 @@ public class MechTargeting : MonoBehaviour
         }
     }
 
-
-    public bool EquipCore(Core newCore)
+    #region Equiping
+    public bool EquipCore(Core newCore, bool deleteCur=true)
     {
         try
         {
-            Destroy(core.gameObject);
+            if (core != baseCore && core != null && deleteCur)
+                Destroy(core.gameObject);
+            else if (core == baseCore)
+                core.gameObject.SetActive(false);
             core = newCore;
+            if (core == null) { 
+                core = baseCore;
+            }
+            core.gameObject.SetActive(true);
+            core.mech = mech;
 
-            mech.coreBase.Apply();
-            if (core != null)
-                core.Apply();
+            baseCore.Apply();
+            core.Apply();
 
             core.transform.parent = this.transform;
             core.transform.localPosition = Vector3.zero;
+            reticle = core.reticleSprite.transform;
             
             return true;
         } catch (System.Exception e)
@@ -74,23 +89,39 @@ public class MechTargeting : MonoBehaviour
         return false;
     }
 
+    public bool RemoveCore()
+    {
+        EquipCore(baseCore);
+        return true;
+    }
+    #endregion
+
     #region Fire
     private void Fire()
     {
         //hitscan fire
         if (core.isHitScan)
         {
+            RaycastHit2D hit = Physics2D.Raycast(
+                (Vector2)core.attackOffset.position,
+                _aimDirection,
+                1000f
+            );
+
             //render
             if (core.trail)
             {
                 //trail effect here
+                TrailRenderer temp = Instantiate(
+                    core.trail, core.attackOffset.position,
+                    Quaternion.identity
+                );
+                temp.transform.Rotate(0f, 0f,
+                    Vector2.SignedAngle(-temp.transform.up, _aimDirection),
+                    Space.World
+                );
+                StartCoroutine(_ScheduleTrail(temp, hit));
             }
-
-            RaycastHit2D hit = Physics2D.Raycast(
-                (Vector2)mech.transform.position + core.attackOffset,
-                _aimDirection,
-                1000f
-            );
 
             if (!hit) return;
             if (hit.transform.TryGetComponent(out MechEntity trgt))
@@ -103,9 +134,33 @@ public class MechTargeting : MonoBehaviour
         {
             if (!core.projectile) return;
 
-            Projectile proj = Instantiate(core.projectile, mech.transform.position, Quaternion.identity);
-            proj.rb.velocity = _aimDirection;
+            Projectile proj = Instantiate(core.projectile, core.attackOffset.position, Quaternion.identity);
+            proj.GetComponent<Rigidbody2D>().velocity = _aimDirection;
+            proj.owner = mech;
+            proj.damage = core.attack;
         }
+
+        core.FireAction();
+        _fireTime = core.attackRate;
+
+        //ammo check
+        if (core.ammo > 0)
+        {
+            core.ammo -= 1;
+            if (core.ammo < 1)
+            {
+                RemoveCore();
+            }
+        }
+    }
+
+    private IEnumerator _ScheduleTrail(TrailRenderer render, RaycastHit2D hit)
+    {
+        yield return new WaitForSeconds(0.05f);
+        if (!hit)
+            render.transform.localPosition = render.transform.right * 100f;
+        else
+            render.transform.position = hit.transform.position;
     }
     #endregion
 

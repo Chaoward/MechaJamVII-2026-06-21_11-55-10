@@ -8,8 +8,9 @@ public abstract class Core : MonoBehaviour
     public PlayerMech mech;
     public int attack = 10;
     public float attackRate = 0.7f;
+    public int ammo = 100;
     public bool isHitScan = false;
-    public Vector2 attackOffset;
+    public Transform attackOffset;
     [Space(3)]
     public TrailRenderer trail;
     public Projectile projectile;
@@ -18,15 +19,12 @@ public abstract class Core : MonoBehaviour
 
 
     public abstract void Apply();
-    public virtual void FireAction()
-    {
-        throw new System.NotImplementedException();
-    }
+    public virtual void FireAction() {}
 
 
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
-        Gizmos.DrawSphere(transform.position + (Vector3)attackOffset, 0.05f);
+        Gizmos.DrawSphere(attackOffset.position, 0.05f);
     }
 }
