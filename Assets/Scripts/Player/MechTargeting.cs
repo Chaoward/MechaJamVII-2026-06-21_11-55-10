@@ -76,7 +76,7 @@ public class MechTargeting : MonoBehaviour
             baseCore.Apply();
             core.Apply();
 
-            core.transform.parent = this.transform;
+            core.transform.SetParent(this.transform, false);
             core.transform.localPosition = Vector3.zero;
             reticle = core.reticleSprite.transform;
             
@@ -99,10 +99,13 @@ public class MechTargeting : MonoBehaviour
     #region Fire
     private void Fire()
     {
+        Projectile proj = null;
+        RaycastHit2D hit = new();
+
         //hitscan fire
         if (core.isHitScan)
         {
-            RaycastHit2D hit = Physics2D.Raycast(
+            hit = Physics2D.Raycast(
                 (Vector2)core.attackOffset.position,
                 _aimDirection,
                 1000f
@@ -134,13 +137,13 @@ public class MechTargeting : MonoBehaviour
         {
             if (!core.projectile) return;
 
-            Projectile proj = Instantiate(core.projectile, core.attackOffset.position, Quaternion.identity);
+            proj = Instantiate(core.projectile, core.attackOffset.position, Quaternion.identity);
             proj.GetComponent<Rigidbody2D>().velocity = _aimDirection;
             proj.owner = mech;
             proj.damage = core.attack;
         }
 
-        core.FireAction();
+        core.FireAction(proj, hit);
         _fireTime = core.attackRate;
 
         //ammo check

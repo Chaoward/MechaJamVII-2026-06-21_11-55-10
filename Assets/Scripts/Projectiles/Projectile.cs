@@ -20,15 +20,18 @@ public class Projectile : MonoBehaviour
     public Rigidbody2D rb {get; private set;}
 
     private static string[] _collideLayers = {"ground", "entity"};
+    // private bool _isPooled = false;
+    // private static Queue<Projectile> _pool = new();
+    // private const int _poolSize = 100;
 
 
-    void Start()
+    protected virtual void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         rb.velocity = rb.velocity.normalized * speed;
     }
 
-    void Update()
+    protected void Update()
     {
         if (lifeTime <= 0f)
         {
@@ -49,11 +52,10 @@ public class Projectile : MonoBehaviour
             return;
 
         if (collision.TryGetComponent(out MechEntity hit)) {
-            if (hit != owner) {
-                if (damage > 0)
-                    hit.Damage(damage);
-                onHit.Invoke(this, collision);
-            }
+            if (hit == owner) return;
+            if (damage > 0)
+                hit.Damage(damage);
+            onHit.Invoke(this, collision);
         }
 
         // if (damage > 0) {

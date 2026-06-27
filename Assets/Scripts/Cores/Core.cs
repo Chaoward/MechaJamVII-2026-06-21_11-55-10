@@ -19,7 +19,7 @@ public abstract class Core : MonoBehaviour
 
 
     public abstract void Apply();
-    public virtual void FireAction() {}
+    public virtual void FireAction(Projectile p, RaycastHit2D h) {}
 
 
     private void OnDrawGizmos()
