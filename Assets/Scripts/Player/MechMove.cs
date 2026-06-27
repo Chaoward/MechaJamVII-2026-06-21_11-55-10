@@ -60,6 +60,9 @@ public class MechMove : MonoBehaviour
     public MechEnergy en;
     public MechTargeting aim;
 
+    public bool isMoving { get {
+        return InputHandler.moveInput.x != 0f && (canWarpDash || !isDashing);  
+    }}
     public bool isFacingRight { get; private set; } = true;
     public bool isDashing { get; private set; }
     public bool isFlying { get; private set; }
@@ -327,7 +330,7 @@ public class MechMove : MonoBehaviour
         Gizmos.color = isGrounded ? Color.green : Color.red;
         Gizmos.DrawSphere(groundCheck.position, _groundcheckradius);
 
-        Gizmos.color = !hasDoubleJumped ? Color.green : Color.red; 
-        Gizmos.DrawSphere(transform.position, 0.3f);
+        // Gizmos.color = !hasDoubleJumped ? Color.green : Color.red; 
+        // Gizmos.DrawSphere(transform.position, 0.3f);
     }
 }

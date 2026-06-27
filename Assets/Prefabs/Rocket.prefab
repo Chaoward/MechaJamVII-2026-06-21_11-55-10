@@ -185,5 +185,5 @@ MonoBehaviour:
   onHit:
     m_PersistentCalls:
       m_Calls: []
-  turnRate: 13
+  turnRate: 20
   target: {fileID: 0}

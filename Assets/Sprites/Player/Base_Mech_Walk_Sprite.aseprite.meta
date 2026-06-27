@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 9b346da011ff70643a95c84dfce72b4c
+guid: e812b724648975945b4dc6b14b27837e
 ScriptedImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -120,18 +120,58 @@ ScriptedImporter:
     tessellationDetail: 0
     uvTransform: {x: 0, y: 0}
   animatedSpriteImportData:
-  - name: Pistol_Assets_Sprites (1)
+  - name: Frame_0
     originalName: 
-    pivot: {x: 1.1875, y: -0.25}
-    alignment: 9
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 4
+      y: 48
+      width: 22
+      height: 36
+    spriteID: 3f3e3c7815597b2409cc90df96aa0a10
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 4, y: 48}
+  - name: Frame_1
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 36
+      y: 48
+      width: 22
+      height: 35
+    spriteID: 8420735f4ed74e8478b53af4b2e1f198
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 36, y: 48}
+  - name: Frame_2
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
       serializedVersion: 2
       x: 4
       y: 4
       width: 24
-      height: 28
-    spriteID: 2daccbbb940c21a44bce598a7ba36c98
+      height: 36
+    spriteID: 9eb344af117965d42ab63a94a1e6126b
     spriteBone: []
     spriteOutline: []
     vertices: []
@@ -140,29 +180,76 @@ ScriptedImporter:
     edges: []
     tessellationDetail: 0
     uvTransform: {x: 4, y: 4}
+  - name: Frame_3
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 36
+      y: 4
+      width: 22
+      height: 36
+    spriteID: c770477aa737cfb42838268b7f1a2546
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 36, y: 4}
   spriteSheetImportData: []
   asepriteLayers:
   - layerIndex: 0
     uuid:
-      value0: 1417976884
+      value0: 4043171849
       value1: 0
       value2: 0
       value3: 0
     guid: 0
-    name: Pistol_Assets_Sprites (1)
+    name: Base_Mech_Walk_Sprite
     layerFlags: 0
     layerType: 0
     blendMode: 0
     cells:
-    - name: Pistol_Assets_Sprites (1)
+    - name: Frame_0
       frameIndex: 0
       additiveSortOrder: 0
       cellRect:
-        x: 3
-        y: 7
+        x: 9
+        y: 2
+        width: 22
+        height: 36
+      spriteId: 3f3e3c7815597b2409cc90df96aa0a10
+    - name: Frame_1
+      frameIndex: 1
+      additiveSortOrder: 0
+      cellRect:
+        x: 9
+        y: 2
+        width: 22
+        height: 35
+      spriteId: 8420735f4ed74e8478b53af4b2e1f198
+    - name: Frame_2
+      frameIndex: 2
+      additiveSortOrder: 0
+      cellRect:
+        x: 9
+        y: 2
         width: 24
-        height: 28
-      spriteId: 2daccbbb940c21a44bce598a7ba36c98
+        height: 36
+      spriteId: 9eb344af117965d42ab63a94a1e6126b
+    - name: Frame_3
+      frameIndex: 3
+      additiveSortOrder: 0
+      cellRect:
+        x: 9
+        y: 2
+        width: 22
+        height: 36
+      spriteId: c770477aa737cfb42838268b7f1a2546
     linkedCells: []
     parentIndex: -1
   platformSettings:
@@ -180,5 +267,5 @@ ScriptedImporter:
   generatePhysicsShape: 0
   secondarySpriteTextures: []
   spritePackingTag: 
-  canvasSize: {x: 63, y: 37}
-  previousTextureSize: {x: 32, y: 64}
+  canvasSize: {x: 40, y: 40}
+  previousTextureSize: {x: 64, y: 128}
