@@ -9,6 +9,7 @@ public abstract class Core : MonoBehaviour
     public int attack = 10;
     public float attackRate = 0.7f;
     public int ammo = 100;
+    public bool canSemiAuto = true;
     public bool isHitScan = false;
     public Transform attackOffset;
     [Space(3)]

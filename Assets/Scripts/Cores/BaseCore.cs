@@ -12,6 +12,11 @@ public class BaseCore : Core
 
     public override void Apply()
     {
+        //===== ENERGY ==================
+        mech.en.maxCharge = 1000;
+        mech.en.rechargeRate = 400;
+        mech.en.rechargeDelay = 2.3f;
+
         //===== MOVEMENT =================
         mech.move.canDoubleJump = false;
         mech.move.canWarpDash = false;

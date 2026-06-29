@@ -194,7 +194,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   damage: 10
   speed: 88
-  lifeTime: 5
+  lifeTime: 3
   owner: {fileID: 0}
   onHit:
     m_PersistentCalls:

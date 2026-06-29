@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -38,7 +39,7 @@ public class MechTargeting : MonoBehaviour
 
     void Update()
     {
-        reticle.position = Camera.main.ScreenToWorldPoint(InputHandler.aimInput);
+        reticle.position = (Vector2)Camera.main.ScreenToWorldPoint(InputHandler.aimInput);
         _aimDirection = (reticle.position - (core ? core.attackOffset.position : transform.position)).normalized;
 
         //rotate weapon render
@@ -143,7 +144,11 @@ public class MechTargeting : MonoBehaviour
             proj.damage = core.attack;
         }
 
-        core.FireAction(proj, hit);
+        try {
+            core.FireAction(proj, hit);
+        } catch (System.Exception e) {
+            Debug.LogError(e);
+        }
         _fireTime = core.attackRate;
 
         //ammo check
@@ -176,6 +181,8 @@ public class MechTargeting : MonoBehaviour
         {
             if (core == null) return;
             isFiring = true;
+            if (core.canSemiAuto)
+                Fire();
         }
         else
         {
