@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -15,6 +14,8 @@ public class Projectile : MonoBehaviour
 
     [Space(5)]
 
+    //public UnityEvent onHit;
+    //[HideInInspector]
     public UnityEvent<Projectile, Collider2D> onHit;
 
     public Rigidbody2D rb {get; private set;}
@@ -33,6 +34,8 @@ public class Projectile : MonoBehaviour
 
     protected void Update()
     {
+        transform.right = rb.velocity;
+
         if (lifeTime <= 0f)
         {
             Destroy(this.gameObject);
@@ -52,10 +55,9 @@ public class Projectile : MonoBehaviour
             return;
 
         if (collision.TryGetComponent(out MechEntity hit)) {
-            if (hit == owner) return;
+            if (hit == owner || owner.CompareTag(hit.tag)) return;
             if (damage > 0)
                 hit.Damage(damage);
-            onHit.Invoke(this, collision);
         }
 
         // if (damage > 0) {
@@ -64,6 +66,29 @@ public class Projectile : MonoBehaviour
         //     }
         // }
 
-        Destroy(this.gameObject);
+        try {
+            onHit.Invoke(this, collision);
+            //onHitWithProj.Invoke(this, collision);
+        } catch (System.Exception e)
+        {
+            Debug.LogError(e);
+        }
+
+        Destroy(this.gameObject, 0.05f);
+    }
+
+    public static Projectile Shoot(Projectile proj, Vector2 origin, Vector2 dir, float speed=-1f)
+    {
+        if (!proj) return null;
+
+        Projectile temp = Instantiate(
+            proj,
+            origin,
+            Quaternion.identity
+        );
+        temp.transform.right = dir.normalized;
+        temp.GetComponent<Rigidbody2D>().velocity = dir.normalized * (speed < 0f ? temp.speed : speed);
+        
+        return temp;
     }
 }
