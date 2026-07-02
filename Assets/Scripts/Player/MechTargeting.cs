@@ -28,7 +28,7 @@ public class MechTargeting : MonoBehaviour
 
     void Awake()
     {
-        InputHandler.BindInput("Fire", FireAction);
+        //InputHandler.BindInput("Fire", FireAction);
     }
 
     void Start()
