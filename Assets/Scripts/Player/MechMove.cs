@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.InputSystem;
 
 
@@ -54,6 +55,10 @@ public class MechMove : MonoBehaviour
 
     public float gravScale = 2f;
     public float gravFallingScale = 2.8f;
+
+    [Space(5)]
+    [Header("Gravity Scale")]
+    public UnityEvent OnDoubleJump;
 
     [Space(5)]
     [Header("Ref")]
@@ -278,6 +283,7 @@ public class MechMove : MonoBehaviour
             {
                 hasDoubleJumped = true;
                 Jump(true);
+                OnDoubleJump.Invoke();
             }
             else if (isGrounded)
             {

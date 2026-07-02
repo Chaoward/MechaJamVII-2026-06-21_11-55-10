@@ -28,11 +28,12 @@ public class MechTargeting : MonoBehaviour
 
     void Awake()
     {
-        baseCore = mech.coreBase;
+        InputHandler.BindInput("Fire", FireAction);
     }
 
     void Start()
     {
+        baseCore = mech.coreBase;
         InputHandler.BindInput("Fire", FireAction);
     }
 

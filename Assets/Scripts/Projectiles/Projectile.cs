@@ -10,6 +10,7 @@ public class Projectile : MonoBehaviour
     public int damage = 10;
     public float speed = 5f;
     public float lifeTime = 5f;
+    public bool removeOnFirstHit = true;
     public MechEntity owner;
 
     [Space(5)]
@@ -29,7 +30,7 @@ public class Projectile : MonoBehaviour
     protected virtual void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        rb.velocity = rb.velocity.normalized * speed;
+        rb.velocity = rb.velocity.magnitude == 0f ? transform.right.normalized * speed : rb.velocity.normalized * speed;
     }
 
     protected void Update()
@@ -74,7 +75,8 @@ public class Projectile : MonoBehaviour
             Debug.LogError(e);
         }
 
-        Destroy(this.gameObject, 0.05f);
+        if (removeOnFirstHit)
+            Destroy(this.gameObject, 0.05f);
     }
 
     public static Projectile Shoot(Projectile proj, Vector2 origin, Vector2 dir, float speed=-1f)
